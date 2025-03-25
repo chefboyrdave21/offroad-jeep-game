@@ -22,6 +22,22 @@ A physics-based offroad simulation game built with Three.js and Cannon.es, featu
 - Damage system with deformation
 - UI system with HUD and menus
 - Terrain system with dynamic generation
+- Advanced terrain features:
+  - Terrain blending and transitions
+  - Terrain deformation and destruction
+  - Terrain erosion and weathering
+  - Path creation and management
+  - Terrain optimization with LOD and chunking
+  - Advanced texturing and materials
+- Vehicle Systems:
+  - Statistics tracking system
+  - Damage and deformation system
+  - Advanced physics system
+  - Input handling system
+  - Audio management system
+  - Networking system
+  - AI system
+  - Mission system with objectives and rewards
 
 ### 🚧 In Progress
 - Vegetation system
@@ -33,7 +49,6 @@ A physics-based offroad simulation game built with Three.js and Cannon.es, featu
 - Multiplayer support
 - Additional vehicles
 - More weather conditions
-- Advanced terrain features
 
 ## Installation
 
@@ -127,6 +142,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
-```
-
-</rewritten_file>
