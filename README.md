@@ -2,38 +2,36 @@
 
 A physics-based offroad simulation game built with Three.js and Cannon.es, featuring a Jeep Wrangler TJ tackling challenging terrain inspired by the Appalachian Mountains.
 
-## Project Overview
+## Current Implementation Status
 
-This game aims to provide a realistic offroad driving experience with:
-- Physics-based vehicle dynamics with realistic suspension
-- Procedurally generated terrain
-- Multiple camera views
-- Winch mechanics for recovery
-- Realistic sound effects
-
-## Current Features
-
+### ✅ Completed Features
 - Basic 3D scene setup with Three.js
 - Physics integration using Cannon.es
 - Vehicle controls with steering, acceleration, and braking
-- Dynamic camera following
-- Basic terrain generation
+- Dynamic camera system with multiple views
+- Enhanced terrain generation with varied elevation
+- Basic UI elements
+- Multiple camera views (Third Person, Wheel View, FPV, Side View)
 
-## Planned Features
+### 🚧 In Progress
+- Sound system
+- Weather effects
+- Damage system
+- Replay system
+- Achievements and statistics
 
-- Enhanced terrain generation with rocks, water features
-- Multiple camera modes (Regular, Wheel View, FPV, Back/Side View)
-- Winch mechanics for vehicle recovery
-- Sound effects (engine, tires, winch, collisions)
-- Scoring system
+### 📋 Planned Features
+- Winch mechanics
 - Multiple trails/levels
-- UI elements (speedometer, score display)
+- Scoring system
+- Visual effects (particle systems)
+- Vegetation system
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/offroad-jeep-game.git
+git clone https://github.com/chefboyrdave21/offroad-jeep-game.git
 ```
 
 2. Install dependencies:
@@ -53,6 +51,11 @@ npx parcel index.html
 - A/Left Arrow: Steer Left
 - D/Right Arrow: Steer Right
 - Space: Brake
+- 1-4: Camera Views
+  - 1: Third Person
+  - 2: Wheel View
+  - 3: First Person
+  - 4: Side View
 
 ## Dependencies
 
