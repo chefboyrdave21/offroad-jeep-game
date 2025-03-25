@@ -12,20 +12,28 @@ A physics-based offroad simulation game built with Three.js and Cannon.es, featu
 - Enhanced terrain generation with varied elevation
 - Basic UI elements
 - Multiple camera views (Third Person, Wheel View, FPV, Side View)
+- Resource management system
+- Scene management system
+- Audio system with 3D sound
+- Camera system with multiple modes
+- Particle system for visual effects
+- Weather system with dynamic effects
+- Vehicle system with physics
+- Damage system with deformation
+- UI system with HUD and menus
+- Terrain system with dynamic generation
 
 ### 🚧 In Progress
-- Sound system
-- Weather effects
-- Damage system
-- Replay system
-- Achievements and statistics
+- Vegetation system
+- Level system
+- Achievement system
+- Save/Load system
 
 ### 📋 Planned Features
-- Winch mechanics
-- Multiple trails/levels
-- Scoring system
-- Visual effects (particle systems)
-- Vegetation system
+- Multiplayer support
+- Additional vehicles
+- More weather conditions
+- Advanced terrain features
 
 ## Installation
 
@@ -56,12 +64,15 @@ npx parcel index.html
   - 2: Wheel View
   - 3: First Person
   - 4: Side View
+- E: Winch Control
+- Esc: Pause Menu
 
 ## Dependencies
 
 - Three.js - 3D graphics
 - Cannon-es - Physics engine
 - Parcel - Bundler
+- Simplex-noise - Terrain generation
 
 ## Project Structure
 
