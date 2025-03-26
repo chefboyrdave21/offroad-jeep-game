@@ -1,71 +1,134 @@
 import * as THREE from 'three';
-import { createJeep } from './jeep.js';
-import { createTerrain } from './terrain.js';
-import { setupControls } from './controls.js';
-import { setupCamera } from './camera.js';
+import * as CANNON from 'cannon-es';
+import { TerrainSystem } from './terrain.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { VehiclePhysics } from './physics/vehiclePhysics.js';
+import { VehicleControls } from './controls/vehicleControls.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('gameCanvas');
-  if (canvas) {
-    // Initialize Three.js renderer
-    const renderer = new THREE.WebGLRenderer({ canvas });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor('lightblue');
+class Game {
+    constructor() {
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        
+        // Physics world
+        this.world = new CANNON.World();
+        this.world.gravity.set(0, -9.82, 0);
+        
+        this.init();
+    }
 
-    // Create scene
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color('lightblue'); // Set scene background color
+    init() {
+        // Scene setup
+        this.scene.background = new THREE.Color(0x87ceeb);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        document.body.appendChild(this.renderer.domElement);
 
-    // Add ambient lighting
-    const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
-    scene.add(ambientLight);
+        // Camera setup
+        this.camera.position.set(0, 5, 10);
 
-    // Add directional light
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(1, 1, 1);
-    scene.add(directionalLight);
+        // Controls setup
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableDamping = true;
+        this.vehicleControls = new VehicleControls();
 
-  // Create camera
-   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        directionalLight.castShadow = true;
+        this.scene.add(ambientLight, directionalLight);
 
-   // Create terrain
-    const terrain = createTerrain(200, 200, 100, 100); // Increased size and segments
-    scene.add(terrain);
+        // Terrain
+        this.terrain = new TerrainSystem(this.scene, this.world);
 
-    // Set up camera
-    const controls = setupCamera(camera, renderer);
+        // Vehicle physics
+        this.vehiclePhysics = new VehiclePhysics(this.world);
 
-    // Position camera
-    camera.position.set(0, 5, 10);
-    camera.lookAt(terrain.position);
+        // Load Jeep model
+        this.loadJeep();
 
-    // Set up controls
-
-    createJeep().then(jeep => {
-      scene.add(jeep);
-      const jeepControls = setupControls(camera, jeep);
+        // Animation loop
+        this.animate();
 
       // Handle window resize
-      function handleResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-      window.addEventListener('resize', handleResize);
+        window.addEventListener('resize', () => this.onResize());
+    }
 
-      // Render the scene
-      function animate() {
-        requestAnimationFrame(animate);
-        jeepControls.update(0.02); // Update controls
-        renderer.render(scene, camera);
-        console.log('Scene rendered:', scene); // Log scene for debugging
-      }
-      animate();
+    loadJeep() {
+        const loader = new GLTFLoader();
+        loader.load(
+            '/models/1999_jeep_wrangler_tj.glb',
+            (gltf) => {
+                console.log('Jeep model loaded successfully!');
+                this.jeepModel = gltf.scene;
+                
+                // Enable shadows
+                this.jeepModel.traverse((node) => {
+                    if (node.isMesh) {
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                    }
+                });
+                
+                this.scene.add(this.jeepModel);
+            },
+            (progress) => {
+                const percent = (progress.loaded / progress.total * 100);
+                console.log(`Loading progress: ${percent.toFixed(2)}%`);
+            },
+            (error) => {
+                console.error('Error loading Jeep model:', error);
+            }
+        );
+    }
 
-      console.log('Three.js scene initialized and rendering.'); // Confirmation log
-    });
-  } else {
-    console.error('Canvas element with id "gameCanvas" not found.');
-  }
-  // TODO: Implement UI
+    updateVehicle() {
+        if (this.jeepModel) {
+            // Get physics body position and rotation
+            const position = this.vehiclePhysics.getChassisWorldPosition();
+            const quaternion = this.vehiclePhysics.getChassisWorldQuaternion();
+
+            // Update model position and rotation
+            this.jeepModel.position.copy(position);
+            this.jeepModel.quaternion.copy(quaternion);
+
+            // Update camera to follow vehicle
+            const cameraOffset = new THREE.Vector3(0, 3, -7);
+            cameraOffset.applyQuaternion(this.jeepModel.quaternion);
+            this.camera.position.copy(this.jeepModel.position).add(cameraOffset);
+            this.camera.lookAt(this.jeepModel.position);
+        }
+    }
+
+    animate() {
+        requestAnimationFrame(() => this.animate());
+
+        // Update physics
+        const deltaTime = 1/60;
+        this.world.step(deltaTime);
+
+        // Update vehicle controls and physics
+        const controlsState = this.vehicleControls.update();
+        this.vehiclePhysics.update(controlsState);
+
+        // Update vehicle model
+        this.updateVehicle();
+
+        // Render
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    onResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+}
+
+// Start the game when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+    new Game();
 });

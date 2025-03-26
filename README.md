@@ -104,6 +104,7 @@ offroad-jeep-game/
 │   └── utils.js        // Utility functions
 ├── assets/             
 │   ├── models/         // 3D models
+│   │   └── vehicles/   // Vehicle models go here
 │   ├── textures/       // Textures
 │   └── sounds/         // Sound effects
 └── .gitignore

@@ -1,7 +1,24 @@
 {
+  "name": "offroad-jeep-game",
+  "version": "1.0.0",
+  "description": "A physics-based offroad simulation game",
+  "source": "index.html",
   "dependencies": {
+    "three": "^0.174.0",
     "cannon-es": "^0.20.0",
-    "parcel-bundler": "^1.12.5",
-    "three": "^0.174.0"
+    "simplex-noise": "^4.0.1"
+  },
+  "devDependencies": {
+    "@parcel/transformer-raw": "^2.9.3",
+    "@parcel/transformer-glsl": "^2.9.3",
+    "parcel": "^2.9.3",
+    "parcel-reporter-static-files-copy": "^1.5.3"
+  },
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "staticFiles": {
+    "staticPath": "static"
   }
 }
